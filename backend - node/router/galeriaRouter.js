@@ -94,4 +94,30 @@ router.get("/:id?", (req, resp) => {
   });
 });
 
+router.put("/", upload.single('arquivo'), (req, resp) => {
+  let resposta = new RespostaClass();
+
+    GaleriaModel.editar(req.body, (error, retorno) => {
+
+      if (error) {
+        resposta.erro = true;
+        resposta.msg = "Ocorreu um erro.";
+        console.log("Erro: ", error);
+        deletarArquivo(req.body.caminho);
+      } else {
+        if (retorno.affectedRows > 0) {
+          resposta.msg = "Cadastro realizado com sucesso.";
+        } else {
+          resposta.erro = true;
+          resposta.msg = "Não foi possível alterar o cadastro.";
+          console.log("Erro: ", error);
+          deletarArquivo(req.body.caminho);
+        }
+      }
+      console.log("resp", resposta)
+      resp.json(resposta);
+    });
+
+});
+
 module.exports = router;
